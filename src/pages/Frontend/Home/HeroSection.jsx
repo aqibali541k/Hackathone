@@ -31,14 +31,14 @@ const HeroSection = () => {
           <p className="text-lg md:text-xl mb-8 drop-shadow-md">
             Join us in making a difference. Donate to support our ongoing campaigns.
           </p>
-          <Button
+          {/* <Button
             type="primary"
             size="large"
             onClick={handleDonateClick}
             className="!bg-gradient-to-r !from-yellow-400 !to-orange-500 !hover:from-yellow-500 !hover:to-orange-600 !text-black !font-bold !px-8 !py-4 !rounded-full !shadow-xl !transition-all !duration-300"
           >
             Donate Now
-          </Button>
+          </Button> */}
         </div>
       </section>
     );

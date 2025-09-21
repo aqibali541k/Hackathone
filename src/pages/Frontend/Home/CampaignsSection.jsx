@@ -1,17 +1,14 @@
 // src/pages/public/CampaignsSection.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Card, Col, Row, Button, Input, Select } from "antd";
+import { Card, Col, Row, Button, Input } from "antd";
 import { Link } from "react-router-dom";
 import { FaDonate } from "react-icons/fa";
-
-const { Option } = Select;
 
 const CampaignsSection = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [filteredCampaigns, setFilteredCampaigns] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
 
   // Fetch campaigns from backend
   useEffect(() => {
@@ -27,54 +24,30 @@ const CampaignsSection = () => {
     fetchCampaigns();
   }, []);
 
-  // Filter campaigns whenever search term or category changes
+  // Filter campaigns whenever search term changes
   useEffect(() => {
-    let filtered = campaigns;
-
-    if (searchTerm) {
-      filtered = filtered.filter((c) =>
-        c.title.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (categoryFilter) {
-      filtered = filtered.filter((c) => c.category === categoryFilter);
-    }
-
+    const filtered = campaigns.filter((c) =>
+      c.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     setFilteredCampaigns(filtered);
-  }, [searchTerm, categoryFilter, campaigns]);
-
-  const categories = ["health", "education", "disaster", "others"];
+  }, [searchTerm, campaigns]);
 
   return (
     <div className="p-6 bg-gradient-to-r from-indigo-500 to-purple-500">
-      {/* Search and Filter */}
-      <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
-        <Input
-          placeholder="Search campaigns..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="!rounded-xl !px-4 !py-3 w-full md:w-1/2"
-        />
-        <Select
-          placeholder="Filter by category"
-          value={categoryFilter}
-          onChange={(value) => setCategoryFilter(value)}
-          allowClear
-          className="!rounded-xl w-full md:w-1/4"
-        >
-          {categories.map((cat) => (
-            <Option key={cat} value={cat}>
-              {cat.charAt(0).toUpperCase() + cat.slice(1)}
-            </Option>
-          ))}
-        </Select>
-      </div>
+      {/* Search Bar */}
 
       {/* Campaigns Grid */}
       <h2 className="text-3xl font-bold mb-8 text-white text-center">
         All Campaigns
       </h2>
+      <div className="flex justify-center mb-6">
+        <Input
+          placeholder="Search campaigns..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="!rounded-xl !px-3 !py-2 !w-62 md:w-1/3"
+        />
+      </div>
       <Row gutter={[24, 24]}>
         {filteredCampaigns.length > 0 ? (
           filteredCampaigns.map((c) => (
@@ -107,7 +80,7 @@ const CampaignsSection = () => {
                   </div>
 
                   <Link to={`/campaigns/${c._id}`}>
-                    <Button className="w-full flex justify-center items-center gap-2 mt-3 bg-gradient-to-r from-indigo-500 to-purple-500 border-none hover:from-indigo-600 hover:to-purple-600">
+                    <Button className="w-full flex justify-center items-center gap-2 mt-3 !bg-gradient-to-r !from-indigo-500 !to-purple-500 !border-none hover:!from-indigo-600 hover:!to-purple-600">
                       <FaDonate /> View & Donate
                     </Button>
                   </Link>
