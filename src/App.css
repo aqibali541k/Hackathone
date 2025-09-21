@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+.auth {
+   @apply bg-[#800080];
+}
+
+.bg-bar{
+  @apply bg-[#800080]
+}
+
+.btn-primary {
+  @apply bg-[#800080] outline-1 hover:bg-[#6f006f] text-white w-full py-2 rounded-xl transition-all duration-300;
+}
+
+.nav-link {
+  @apply text-gray-200 hover:text-white transition-all duration-200 select-none;
+}
+
+.mob-link {
+  @apply text-gray-200 focus:text-white block p-1 select-none text-lg;
+}
