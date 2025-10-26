@@ -1,47 +1,63 @@
 import React from "react";
 import { Button } from "antd";
-import { Navigate, useNavigate } from "react-router-dom";
-import CampaignsSection from "./CampaignsSection";
+import { HeartOutlined } from "@ant-design/icons";
 
 const HeroSection = () => {
-  const navigate = useNavigate();
-
+  // Smooth scroll to Campaigns section
   const handleDonateClick = () => {
-    return <CampaignsSection />;
-  };
-    return (
-      <section className="relative w-full h-[80vh] flex items-center justify-center text-center text-white overflow-hidden">
-        {/* Background Image */}
-        <div
-          className="absolute top-0 left-0 w-full h-full bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://plus.unsplash.com/premium_photo-1683140538884-07fb31428ca6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fGRvbmF0aW9uJTIwaHVifGVufDB8fDB8fHww')",
-          }}
-        ></div>
-
-        {/* Dark Overlay */}
-        <div className="absolute top-0 left-0 w-full h-full bg-black/60"></div>
-
-        {/* Content */}
-        <div className="relative z-10 max-w-3xl px-4">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 drop-shadow-lg">
-            Support Our Cause
-          </h1>
-          <p className="text-lg md:text-xl mb-8 drop-shadow-md">
-            Join us in making a difference. Donate to support our ongoing campaigns.
-          </p>
-          {/* <Button
-            type="primary"
-            size="large"
-            onClick={handleDonateClick}
-            className="!bg-gradient-to-r !from-yellow-400 !to-orange-500 !hover:from-yellow-500 !hover:to-orange-600 !text-black !font-bold !px-8 !py-4 !rounded-full !shadow-xl !transition-all !duration-300"
-          >
-            Donate Now
-          </Button> */}
-        </div>
-      </section>
-    );
+    const campaignsSection = document.getElementById("campaigns");
+    if (campaignsSection) {
+      campaignsSection.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
-  export default HeroSection;
+  return (
+    <section
+      id="home"
+      className="relative w-full h-[85vh] flex items-center justify-center text-center text-white overflow-hidden font-serif"
+    >
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=1600&q=80')",
+        }}
+      ></div>
+
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-amber-900/40 to-black/70"></div>
+
+      {/* Content */}
+      <div className="relative z-10 max-w-4xl px-6 py-10">
+        <h1 className="text-5xl md:text-6xl font-bold mb-6 text-amber-200 drop-shadow-lg leading-tight">
+          Give Hope, Change Lives
+        </h1>
+        <p className="text-lg md:text-xl mb-10 text-amber-100 max-w-2xl mx-auto leading-relaxed">
+          Every donation is a step toward a brighter tomorrow. Join us in
+          spreading kindness, compassion, and care to those who need it most.
+        </p>
+
+        <Button
+          type="primary"
+          size="large"
+          onClick={handleDonateClick}
+          icon={<HeartOutlined />}
+          className="!bg-gradient-to-r !from-amber-400 !to-orange-600 !hover:from-orange-500 !hover:to-amber-500 
+          !text-white !font-semibold !px-8 !py-5 !rounded-full !shadow-2xl !transition-all !duration-300 !border-none"
+        >
+          Donate Now
+        </Button>
+      </div>
+
+      {/* Decorative Elements */}
+      <div className="absolute bottom-8 left-0 w-full flex justify-center gap-8 text-amber-300 text-sm opacity-80">
+        <span>❤️ Empower Communities</span>
+        <span>🌍 Spread Kindness</span>
+        <span>🤝 Be the Change</span>
+      </div>
+    </section>
+  );
+};
+
+export default HeroSection;

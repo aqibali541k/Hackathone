@@ -1,110 +1,112 @@
-import React, { useState } from 'react'
-import { Button } from "antd"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons"
-import { Link, useNavigate } from "react-router-dom"
-import { LoginOutlined, LogoutOutlined } from '@ant-design/icons'
-import { useAuthContext } from '../../contexts/Auth/AuthContext'
-import { FaDonate } from 'react-icons/fa'
+// src/components/Header.jsx
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, HeartHandshake } from "lucide-react";
+import { motion } from "framer-motion";
+import { Link as ScrollLink } from "react-scroll";
 
-const Navbar = () => {
-    const { isAuth, handleLogout } = useAuthContext()
-    const [isOpen, setIsOpen] = useState(false)
-    const navigate = useNavigate()
+const Header = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
-    return (
-        <nav className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-lg backdrop-blur-md">
-            <div className="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
-                {/* Logo */}
-                <Link to="/" className="text-2xl font-bold tracking-wide flex items-center gap-2">
-                    <FaDonate />
-                    Donation-Hub
-                </Link>
+  const navItems = [
+    { name: "Home", path: "home" },
+    { name: "About", path: "about" },
+    { name: "Campaigns", path: "campaigns" },
+    { name: "Testimonials", path: "testimonials" },
+  ];
 
-                {/* Desktop menu */}
-                <ul className="hidden md:flex items-center space-x-6">
-                    <Link to="/" className="relative group cursor-pointer">
-                        Home
-                        <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-white transition-all duration-500 group-hover:w-full"></span>
-                    </Link>
+  return (
+    <header className="fixed top-0 left-0 w-full z-50 bg-black/60 backdrop-blur-md border-b border-amber-500/30 text-white">
+      <div className="max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2 text-2xl font-bold">
+          <HeartHandshake className="text-amber-400" />
+          <span className="text-amber-300">Donation Hub</span>
+        </Link>
 
-                    <li className="relative group cursor-pointer" onClick={() => navigate("/dashboard")}>
-                        Dashboard
-                        <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-white transition-all duration-500 group-hover:w-full"></span>
-                    </li>
-
-                    {/* Donate Button */}
-                    {/* <Link to="/donate">
-                        <Button className='!bg-yellow-400 !text-black !border-none !rounded-2xl flex items-center gap-1'>
-                            <FaDonate /> Donate
-                        </Button>
-                    </Link> */}
-                </ul>
-
-                {/* Auth buttons */}
-                <div className="hidden md:flex items-center space-x-2">
-                    {!isAuth ? (
-                        <Link to="/auth/login">
-                            <Button className='!text-white !bg-green-600 !border-none !rounded-2xl'>
-                                <LoginOutlined />
-                            </Button>
-                        </Link>
-                    ) : (
-                        <Button
-                            className='!text-white !bg-red-600 !border-none !rounded-2xl'
-                            onClick={handleLogout}
-                        >
-                            <LogoutOutlined />
-                        </Button>
-                    )}
-                </div>
-
-                {/* Mobile Hamburger */}
-                <button
-                    className="md:hidden bg-transparent border-0 focus:outline-none"
-                    onClick={() => setIsOpen(!isOpen)}
-                >
-                    <FontAwesomeIcon icon={isOpen ? faTimes : faBars} size="xl" />
-                </button>
-            </div>
-
-            {/* Mobile menu */}
-            {isOpen && (
-                <ul className="md:hidden flex flex-col px-4 pb-4 space-y-4 animate-slideDown">
-                    <Link to="/" className="relative group cursor-pointer" >
-                        Home
-                        <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-white transition-all duration-500 group-hover:w-full"></span>
-                    </Link>
-
-                    <li className="relative group cursor-pointer" onClick={() => navigate("/dashboard")}>
-                        Dashboard
-                        <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-white transition-all duration-500 group-hover:w-full"></span>
-                    </li>
-
-                    {/* Donate Button */}
-                    {/* <Link to="/donate" className="flex justify-start">
-                        <Button className='!bg-yellow-400 !text-black !border-none !rounded-2xl flex items-center gap-1'>
-                            <FaDonate /> Donate
-                        </Button>
-                    </Link> */}
-
-                    {/* Auth buttons */}
-                    {!isAuth ? (
-                        <Link to="/auth/login">
-                            <Button className='!text-white !bg-green-600 !border-none !rounded-2xl'>Login</Button>
-                        </Link>
-                    ) : (
-                        <Button
-                            className='!text-white !bg-red-600 !border-none !rounded-2xl'
-                            onClick={handleLogout}
-                        >
-                            Logout
-                        </Button>
-                    )}
-                </ul>
-            )}
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex gap-8">
+          {navItems.map((item) => (
+            <ScrollLink
+              key={item.name}
+              to={item.path}
+              smooth={true}
+              duration={700}
+              offset={-80}
+              spy={true}
+              activeClass="text-amber-400 border-b-2 border-amber-400"
+              className="relative font-semibold hover:text-amber-400 transition-all cursor-pointer pb-1"
+            >
+              {item.name}
+            </ScrollLink>
+          ))}
         </nav>
-    )
-}
 
-export default Navbar
+        {/* Dashboard Button (Route Navigation) */}
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="hidden md:inline-block cursor-pointer bg-gradient-to-r from-amber-400 to-yellow-500 text-black font-semibold px-6 py-2 rounded-full shadow-lg hover:from-yellow-400 hover:to-amber-500 transition-all"
+        >
+          Dashboard
+        </button>
+
+        {/* Mobile Menu Toggle */}
+        <button
+          className="md:hidden text-amber-400"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <X size={26} /> : <Menu size={26} />}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="md:hidden bg-black/90 backdrop-blur-md border-t border-amber-400/20 px-6 py-4 space-y-4"
+        >
+          {navItems.map((item) => (
+            <ScrollLink
+              key={item.name}
+              to={item.path}
+              smooth={true}
+              duration={700}
+              offset={-80}
+              onClick={() => setMenuOpen(false)}
+              className="block text-gray-200 hover:text-amber-400 font-medium cursor-pointer"
+            >
+              {item.name}
+            </ScrollLink>
+          ))}
+
+          {/* Donate Scroll Button */}
+          <ScrollLink
+            to="campaigns"
+            smooth={true}
+            duration={700}
+            offset={-80}
+            onClick={() => setMenuOpen(false)}
+            className="block bg-gradient-to-r from-amber-400 to-yellow-500 text-black font-semibold text-center px-4 py-2 rounded-full shadow-lg cursor-pointer"
+          >
+            Donate
+          </ScrollLink>
+
+          {/* Dashboard (navigate to route) */}
+          <button
+            onClick={() => {
+              navigate("/dashboard");
+              setMenuOpen(false);
+            }}
+            className="block  w-full text-center border border-amber-400 text-amber-400 font-semibold py-2 rounded-full hover:bg-amber-400 hover:text-black cursor-pointer transition-all"
+          >
+            Dashboard
+          </button>
+        </motion.div>
+      )}
+    </header>
+  );
+};
+
+export default Header;

@@ -8,10 +8,21 @@ import TestimonialsSection from "./TestimonialSection";
 const Home = () => {
   return (
     <div>
-      <HeroSection />
-      <AboutSection />
-      <CampaignsSection />
-      <TestimonialsSection />
+      <section id="hero">
+        <HeroSection />
+      </section>
+
+      <section id="about">
+        <AboutSection />
+      </section>
+
+      <section id="campaigns">
+        <CampaignsSection />
+      </section>
+
+      <section id="testimonials">
+        <TestimonialsSection />
+      </section>
     </div>
   );
 };
