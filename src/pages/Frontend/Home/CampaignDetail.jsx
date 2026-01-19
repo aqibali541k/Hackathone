@@ -103,7 +103,7 @@ const CampaignDetail = () => {
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 6.6 }}
+          transition={{ duration: 0.6 }}
         >
           <div className="overflow-hidden rounded-3xl shadow-2xl">
             <Carousel autoplay>
