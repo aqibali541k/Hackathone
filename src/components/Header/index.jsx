@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, HeartHandshake } from "lucide-react";
 import { motion } from "framer-motion";
+import { DashboardOutlined } from "@ant-design/icons";
+import { FaDonate } from "react-icons/fa";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -62,6 +64,7 @@ const Header = () => {
           text-black font-semibold px-6 py-2 rounded-full shadow-lg
           hover:from-yellow-400 hover:to-amber-500 transition-all"
         >
+          <DashboardOutlined className="mx-1!" />
           Dashboard
         </button>
 
@@ -103,10 +106,10 @@ const Header = () => {
               handleNavClick("campaigns");
               setMenuOpen(false);
             }}
-            className="block w-full bg-gradient-to-r from-amber-400 to-yellow-500
-            text-black font-semibold text-center px-4 py-2 rounded-full shadow-lg"
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-black font-semibold px-4 py-2 rounded-full shadow-lg text-sm md:text-base hover:scale-105 transition-transform duration-200"
           >
-            Donate
+            <FaDonate className="text-lg" />
+            <span className="text-lg">Donate</span>
           </button>
 
           {/* Dashboard */}
@@ -119,6 +122,7 @@ const Header = () => {
             text-amber-400 font-semibold py-2 rounded-full
             hover:bg-amber-400 hover:text-black transition-all"
           >
+            <DashboardOutlined className="mx-1!" />
             Dashboard
           </button>
         </motion.div>

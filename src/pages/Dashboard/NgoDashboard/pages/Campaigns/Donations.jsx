@@ -4,6 +4,7 @@ import { List, Spin, message, Avatar, Divider, Carousel } from "antd";
 import { motion } from "framer-motion";
 import { FaDonate } from "react-icons/fa";
 import { useAuthContext } from "../../../../../contexts/Auth/AuthContext";
+import Loader from "../../../../../components/Loader";
 
 const Donations = () => {
   const { token } = useAuthContext();
@@ -47,7 +48,7 @@ const Donations = () => {
   }, [token]);
 
   if (loading) {
-    return <Spin size="large" className="flex justify-center mt-20" />;
+    return <Loader />;
   }
 
   return (

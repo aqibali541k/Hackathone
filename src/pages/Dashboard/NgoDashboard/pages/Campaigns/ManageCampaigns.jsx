@@ -13,6 +13,7 @@ import {
   Spin,
 } from "antd";
 import { useAuthContext } from "../../../../../contexts/Auth/AuthContext";
+import Loader from "../../../../../components/Loader";
 
 const ManageCampaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -103,7 +104,7 @@ const ManageCampaigns = () => {
       <h2 className="text-2xl font-bold mb-6">🎯 My Campaigns</h2>
 
       {loading ? (
-        <Spin size="large" />
+        <Loader />
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {campaigns.map((campaign) => (

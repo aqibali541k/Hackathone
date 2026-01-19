@@ -68,8 +68,8 @@ const CampaignsSection = () => {
                     bg-gradient-to-br from-amber-100 to-orange-50
                     border border-amber-200
                     shadow-sm
-                    transition-all duration-300 ease-in-out
-                    hover:-translate-y-2 hover:shadow-xl
+                    transition-transform! duration-300! ease-in-out!
+                    hover:-translate-y-2! hover:shadow-xl!
                   "
                   cover={
                     <div className="relative overflow-hidden">
@@ -78,7 +78,7 @@ const CampaignsSection = () => {
                         alt={c.title}
                         className="
                           h-44 w-full object-cover
-                          transition-transform duration-500
+                          transition-transform duration-300
                           group-hover:scale-105
                         "
                       />

@@ -12,6 +12,7 @@ import {
 import { motion } from "framer-motion";
 import { Users, DollarSign } from "lucide-react";
 import { useAuthContext } from "../../../../../contexts/Auth/AuthContext";
+import Loader from "../../../../../components/Loader";
 
 const Analytics = () => {
   const [totalDonors, setTotalDonors] = useState(0);
@@ -58,7 +59,9 @@ const Analytics = () => {
 
   if (loading)
     return (
-      <div className="p-6 text-center text-gray-500">Loading analytics...</div>
+      <div className="p-6 text-center text-gray-500">
+        <Loader />
+      </div>
     );
 
   return (
