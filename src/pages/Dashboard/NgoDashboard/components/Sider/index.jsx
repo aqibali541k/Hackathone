@@ -92,7 +92,7 @@ const Sider = () => {
 
             {/* Label when sider open */}
             {isSiderOpen && (
-              <span className="whitespace-nowrap">{item.label}</span>
+              <span className="whitespace-nowrap ">{item.label}</span>
             )}
 
             {/* Tooltip when sider closed */}
