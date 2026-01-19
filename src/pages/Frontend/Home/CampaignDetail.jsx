@@ -31,7 +31,9 @@ const CampaignDetail = () => {
   /* ================= FETCH CAMPAIGN ================= */
   const fetchCampaign = async () => {
     try {
-      const res = await axios.get(`http://localhost:8000/campaigns/read/${id}`);
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/campaigns/read/${id}`,
+      );
       setCampaign(res.data);
     } catch {
       message.error("Failed to load campaign");
