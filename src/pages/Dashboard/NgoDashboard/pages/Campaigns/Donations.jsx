@@ -27,7 +27,7 @@ const Donations = () => {
       await Promise.all(
         res.data.map(async (camp) => {
           const donRes = await axios.get(
-            `http://localhost:8000/donations/campaign/${camp._id}`,
+            `${import.meta.env.VITE_API_URL}/donations/campaign/${camp._id}`,
             { headers: { Authorization: `Bearer ${token}` } },
           );
           map[camp._id] = donRes.data;

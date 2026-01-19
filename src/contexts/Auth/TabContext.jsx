@@ -4,7 +4,7 @@ const TabContext = createContext();
 
 const TabProvider = ({ children }) => {
     const [isSiderOpen, setIsSiderOpen] = useState(false);
-    const [currentTab, setCurrentTab] = useState("profile");
+    // const [currentTab, setCurrentTab] = useState("profile");
 
     return <TabContext.Provider value={{ isSiderOpen, setIsSiderOpen, currentTab, setCurrentTab }}>{children}</TabContext.Provider>;
 };

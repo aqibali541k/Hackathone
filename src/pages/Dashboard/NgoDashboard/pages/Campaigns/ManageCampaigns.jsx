@@ -50,9 +50,12 @@ const ManageCampaigns = () => {
   // ✅ Delete handler
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/campaigns/delete/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/campaigns/delete/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       message.success("Campaign deleted successfully");
       fetchCampaigns();
     } catch (err) {
@@ -64,7 +67,7 @@ const ManageCampaigns = () => {
   const handleEdit = async (id) => {
     try {
       const res = await axios.get(
-        `http://localhost:8000/campaigns/read/${id}`,
+        `${import.meta.env.VITE_API_URL}/campaigns/read/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` }, // agar private hota
         },
@@ -82,7 +85,7 @@ const ManageCampaigns = () => {
   const handleUpdate = async (values) => {
     try {
       await axios.put(
-        `http://localhost:8000/campaigns/update/${selectedCampaign._id}`,
+        `${import.meta.env.VITE_API_URL}/campaigns/update/${selectedCampaign._id}`,
         values,
         { headers: { Authorization: `Bearer ${token}` } },
       );
