@@ -12,10 +12,16 @@ import { Link } from "react-router-dom";
 import { useTabContext } from "../../../../../contexts/Auth/TabContext";
 
 const Sider = () => {
-  const { isSiderOpen, setIsSiderOpen, currentTab, setCurrentTab } = useTabContext();
+  const { isSiderOpen, setIsSiderOpen, currentTab, setCurrentTab } =
+    useTabContext();
 
   const menuItems = [
-    { key: "Profile", label: "Profile", icon: <UserOutlined />, path: "/dashboard/profile" },
+    {
+      key: "Profile",
+      label: "Profile",
+      icon: <UserOutlined />,
+      path: "/dashboard/profile",
+    },
   ];
 
   return (
@@ -56,7 +62,9 @@ const Sider = () => {
             <span className="text-lg">{item.icon}</span>
 
             {/* Label when sider open */}
-            {isSiderOpen && <span className="whitespace-nowrap">{item.label}</span>}
+            {isSiderOpen && (
+              <span className="whitespace-nowrap">{item.label}</span>
+            )}
 
             {/* Tooltip when sider closed */}
             {!isSiderOpen && (

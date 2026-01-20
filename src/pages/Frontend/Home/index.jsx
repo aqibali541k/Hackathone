@@ -4,6 +4,7 @@ import HeroSection from "./HeroSection";
 import AboutSection from "./AboutSection";
 import CampaignsSection from "./CampaignsSection";
 import TestimonialsSection from "./TestimonialSection";
+// import Contact from "./Contact";
 
 const Home = () => {
   return (
@@ -23,6 +24,10 @@ const Home = () => {
       <section id="testimonials">
         <TestimonialsSection />
       </section>
+
+      {/* <section id="contact">
+        <Contact />
+      </section> */}
     </div>
   );
 };

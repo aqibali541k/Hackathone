@@ -19,3 +19,5 @@
 .mob-link {
   @apply text-gray-200 focus:text-white block p-1 select-none text-lg;
 }
+
+

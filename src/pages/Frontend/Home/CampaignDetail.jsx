@@ -6,6 +6,7 @@ import { Progress, Spin, Button, Input, message, Carousel } from "antd";
 import { motion } from "framer-motion";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useAuthContext } from "../../../contexts/Auth/AuthContext";
+import Loader from "../../../components/Loader";
 
 /* ================= CLOUDINARY IMAGE OPTIMIZER ================= */
 const optimizeImage = (url) =>
@@ -86,7 +87,7 @@ const CampaignDetail = () => {
   if (loading) {
     return (
       <div className="flex justify-center mt-32">
-        <Spin size="large" />
+        <Loader />
       </div>
     );
   }
