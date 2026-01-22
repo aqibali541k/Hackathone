@@ -1,21 +1,15 @@
 import React from "react";
 import {
   BarChartOutlined,
-  CreditCardOutlined,
   DollarCircleOutlined,
   FileAddOutlined,
-  FormOutlined,
-  FundOutlined,
   HomeFilled,
-  LockOutlined,
   MenuOutlined,
-  TeamOutlined,
   UnorderedListOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import { useTabContext } from "../../../../../contexts/Auth/TabContext";
-import { MdOutlineUpdate } from "react-icons/md";
 
 const Sider = () => {
   const { isSiderOpen, setIsSiderOpen } = useTabContext();

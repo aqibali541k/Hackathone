@@ -56,7 +56,9 @@ const CampaignDetail = () => {
     }
 
     if (!token) {
-      return message.error("Please login to donate");
+      message.warning("Please login to donate");
+      navigate("/auth/login");
+      return;
     }
 
     setDonating(true);

@@ -12,7 +12,7 @@ const Dashboard = () => {
 
       <div
         className={`flex-1 flex flex-col transition-all duration-300 
-          ${isSiderOpen ? "ml-60" : "ml-16"}`}
+          ${isSiderOpen ? "ml-60" : "items-center ml-16"}`}
       >
         <Index />
       </div>
