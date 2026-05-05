@@ -3,11 +3,11 @@ import {
   Col,
   Form,
   Input,
-  message,
   Row,
   Select,
   Typography,
 } from "antd";
+import { toast } from "react-toastify";
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -51,11 +51,11 @@ const Register = () => {
       const { firstName, lastName, dob, email, password, confirmPassword, role } = state;
 
       if (!firstName || !lastName || !dob || !email || !password || !role) {
-        return message.error("All fields are required");
+        return toast.error("All fields are required");
       }
 
       if (password !== confirmPassword) {
-        return message.error("Passwords do not match");
+        return toast.error("Passwords do not match");
       }
 
       setIsProcessing(true);
@@ -68,12 +68,12 @@ const Register = () => {
 
       const { token, data: user } = res.data;
       handleRegister(user, token);
-      message.success("Account created successfully!");
+      toast.success("Account created successfully!");
       navigate("/");
       setState(initialState);
     } catch (error) {
       console.error(error.response?.data || error);
-      return message.error(
+      return toast.error(
         error.response?.data?.message || "Something went wrong while creating account",
       );
     } finally {

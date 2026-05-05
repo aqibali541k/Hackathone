@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { message, Avatar, Button, Input, DatePicker, Skeleton, Tooltip, Upload } from "antd";
+import { Avatar, Button, Input, DatePicker, Skeleton, Tooltip, Upload } from "antd";
+import { toast } from "react-toastify";
 import { UserOutlined, MailOutlined, CameraOutlined, EditOutlined, SaveOutlined, CalendarOutlined, SecurityScanOutlined, HeartFilled } from "@ant-design/icons";
 import { useAuthContext } from "../../../../../contexts/Auth/AuthContext";
 import dayjs from "dayjs";
@@ -24,7 +25,7 @@ const Profile = () => {
       setFormData(res.data.user);
     } catch (err) {
       console.error(err);
-      message.error("Failed to load profile");
+      toast.error("Failed to load profile");
     } finally {
       setLoading(false);
     }
@@ -50,13 +51,13 @@ const Profile = () => {
       );
       setProfile(res.data.user);
       setFormData(res.data.user);
-      message.success("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
       setEditMode(false);
       setAvatarFile(null);
       setTimeout(() => window.location.reload(), 800);
     } catch (err) {
       console.error(err);
-      message.error("Failed to update profile");
+      toast.error("Failed to update profile");
     } finally {
       setLoading(false);
     }

@@ -5,8 +5,8 @@ import {
   Button,
   DatePicker,
   Select,
-  message,
 } from "antd";
+import { toast } from "react-toastify";
 import { PlusOutlined, DeleteOutlined, PictureOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useAuthContext } from "../../../../../contexts/Auth/AuthContext";
@@ -50,7 +50,7 @@ const CampaignForm = () => {
           
           setExistingImages(c.images || []);
         } catch (err) {
-          message.error("Failed to load campaign data");
+          toast.error("Failed to load campaign data");
           navigate("/dashboard/manage-campaigns");
         } finally {
           setFetching(false);
@@ -109,7 +109,7 @@ const CampaignForm = () => {
             },
           },
         );
-        message.success("Campaign updated successfully!");
+        toast.success("Campaign updated successfully!");
         navigate("/dashboard/manage-campaigns");
       } else {
         await axios.post(
@@ -122,13 +122,13 @@ const CampaignForm = () => {
             },
           },
         );
-        message.success("Campaign created successfully!");
+        toast.success("Campaign created successfully!");
         form.resetFields();
         setImages([]);
       }
     } catch (error) {
       console.error(error);
-      message.error(error.response?.data?.message || "Something went wrong");
+      toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }

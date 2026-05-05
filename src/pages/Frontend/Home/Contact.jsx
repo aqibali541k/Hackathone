@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin } from "lucide-react";
-import { message } from "antd";
+import { toast } from "react-toastify";
 import axios from "axios";
 
 const Contact = () => {
@@ -15,17 +15,17 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) {
-      return message.error("All fields are required");
+      return toast.error("All fields are required");
     }
     setLoading(true);
     
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/contact/submit`, form);
-      message.success("Message sent successfully!");
+      toast.success("Message sent successfully!");
       setForm({ name: "", email: "", message: "" });
     } catch (error) {
       console.error(error);
-      message.error("Failed to send message.");
+      toast.error("Failed to send message.");
     } finally {
       setLoading(false);
     }

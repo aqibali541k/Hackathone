@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Popconfirm, message, Spin, Tooltip } from "antd";
+import { Popconfirm, Spin, Tooltip } from "antd";
+import { toast } from "react-toastify";
 import { EditOutlined, DeleteOutlined, PictureOutlined, CalendarOutlined, PushpinOutlined, HeartFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../../../contexts/Auth/AuthContext";
@@ -22,7 +23,7 @@ const ManageCampaigns = () => {
       setCampaigns(res.data);
     } catch (err) {
       console.error(err);
-      message.error("Failed to load your campaigns");
+      toast.error("Failed to load your campaigns");
     } finally {
       setLoading(false);
     }
@@ -38,11 +39,11 @@ const ManageCampaigns = () => {
         `${import.meta.env.VITE_API_URL}/campaigns/delete/${id}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      message.success("Campaign deleted successfully");
+      toast.success("Campaign deleted successfully");
       setCampaigns(campaigns.filter((c) => c._id !== id));
     } catch (err) {
       console.error(err);
-      message.error("Failed to delete campaign");
+      toast.error("Failed to delete campaign");
     }
   };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { message } from "antd";
+import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { Heart, Calendar, ArrowRight } from "lucide-react";
 import { useAuthContext } from "../../../../../contexts/Auth/AuthContext";
@@ -23,7 +23,7 @@ const DonationHistory = () => {
         setDonations(res.data);
       } catch (err) {
         console.error(err);
-        message.error("Failed to load donation history");
+        toast.error("Failed to load donation history");
       } finally {
         setLoading(false);
       }

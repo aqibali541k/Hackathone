@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { List, Spin, message, Avatar, Divider, Carousel } from "antd";
+import { List, Spin, Avatar, Divider, Carousel } from "antd";
+import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { FaDonate } from "react-icons/fa";
 import { useAuthContext } from "../../../../../contexts/Auth/AuthContext";
@@ -37,7 +38,7 @@ const Donations = () => {
 
       setDonationsMap(map);
     } catch (error) {
-      message.error("Failed to load data");
+      toast.error("Failed to load data");
     } finally {
       setLoading(false);
     }

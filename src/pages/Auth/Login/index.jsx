@@ -1,4 +1,5 @@
-import { Button, Form, Input, message, Typography } from "antd";
+import { Button, Form, Input, Typography } from "antd";
+import { toast } from "react-toastify";
 import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -21,7 +22,7 @@ const Login = () => {
     const { email, password } = state;
 
     if (!email || !password) {
-      return message.error("All fields are required");
+      return toast.error("All fields are required");
     }
 
     setLoading(true);
@@ -32,11 +33,11 @@ const Login = () => {
       );
       const { token, data: user } = res.data;
       handleLogin(user, token);
-      message.success("Welcome back!");
+      toast.success("Welcome back!");
       navigate("/");
     } catch (error) {
       console.error(error);
-      message.error(error.response?.data?.message || "Invalid credentials");
+      toast.error(error.response?.data?.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }

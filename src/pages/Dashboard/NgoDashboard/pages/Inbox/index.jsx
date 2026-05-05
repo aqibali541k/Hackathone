@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { message, Select } from "antd";
+import { Select } from "antd";
+import { toast } from "react-toastify";
 import { MailOutlined, CheckCircleOutlined, ClockCircleOutlined, UserOutlined } from "@ant-design/icons";
 import { useAuthContext } from "../../../../../contexts/Auth/AuthContext";
 import Loader from "../../../../../components/Loader";
@@ -31,10 +32,10 @@ const Inbox = () => {
 
       if (err.response?.status === 401 || err.response?.status === 403) {
         setApiError("Authentication Error: Your session token is invalid or expired. Please re-login.");
-        message.error("Access denied. Please log in again.");
+        toast.error("Access denied. Please log in again.");
       } else {
         setApiError("Failed to fetch messages from the server.");
-        message.error("Failed to fetch messages.");
+        toast.error("Failed to fetch messages.");
       }
     } finally {
       setLoading(false);
@@ -54,7 +55,7 @@ const Inbox = () => {
       // Subtle background refresh not needed but good for UX
     } catch (err) {
       console.error(err);
-      message.error("Failed to update message status");
+      toast.error("Failed to update message status");
     }
   };
 

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Progress, Button, Input, message, Carousel } from "antd";
+import { Progress, Button, Input, Carousel } from "antd";
+import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { ArrowLeft, Heart, ShieldCheck, CreditCard } from "lucide-react";
 import { useAuthContext } from "../../../contexts/Auth/AuthContext";
@@ -34,7 +35,7 @@ const CampaignDetail = () => {
       );
       setCampaign(res.data);
     } catch {
-      message.error("Failed to load campaign");
+      toast.error("Failed to load campaign");
     } finally {
       setLoading(false);
     }
@@ -48,14 +49,14 @@ const CampaignDetail = () => {
     const { name, email, amount } = form;
 
     if (!name || !email || !amount) {
-      return message.error("Please fill all fields");
+      return toast.error("Please fill all fields");
     }
     if (Number(amount) <= 0) {
-      return message.error("Please enter a valid amount");
+      return toast.error("Please enter a valid amount");
     }
 
     if (!token) {
-      message.warning("Please login to donate");
+      toast.warning("Please login to donate");
       navigate("/auth/login");
       return;
     }
@@ -68,11 +69,11 @@ const CampaignDetail = () => {
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
-      message.success("Thank you for your generous donation!");
+      toast.success("Thank you for your generous donation!");
       setForm({ ...form, amount: "" });
       fetchCampaign();
     } catch {
-      message.error("Donation failed. Please try again.");
+      toast.error("Donation failed. Please try again.");
     } finally {
       setDonating(false);
     }
