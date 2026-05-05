@@ -1,40 +1,79 @@
 import React from "react";
-import { Heart, HandHeart, Users } from "lucide-react";
+import { motion } from "framer-motion";
+import { Heart, HandHeart, Users, ShieldCheck } from "lucide-react";
+
+const features = [
+  {
+    icon: <Heart className="w-8 h-8" />,
+    title: "Spread Love",
+    desc: "Your generosity creates a ripple effect of kindness across communities.",
+    color: "text-rose-500",
+    bg: "bg-rose-50",
+  },
+  {
+    icon: <HandHeart className="w-8 h-8" />,
+    title: "Support Humanity",
+    desc: "Fund healthcare, education, and emergency relief where it's needed most.",
+    color: "text-blue-500",
+    bg: "bg-blue-50",
+  },
+  {
+    icon: <Users className="w-8 h-8" />,
+    title: "Build Community",
+    desc: "Join a growing network of donors committed to lasting positive change.",
+    color: "text-green-500",
+    bg: "bg-green-50",
+  },
+  {
+    icon: <ShieldCheck className="w-8 h-8" />,
+    title: "Trust & Transparency",
+    desc: "Every donation is tracked and reported. See exactly where your money goes.",
+    color: "text-amber-500",
+    bg: "bg-amber-50",
+  },
+];
 
 const AboutSection = () => {
   return (
-    <section className="relative bg-gradient-to-br from-amber-50 via-orange-100 to-amber-50 py-20 px-6 font-serif overflow-hidden">
-      {/* Decorative Background */}
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1602524204632-9c3b77e9b4b2?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center opacity-10"></div>
-      <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-amber-50/80 to-orange-50/90"></div>
+    <section className="bg-white section-padding">
+      <div className="max-w-6xl mx-auto text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="text-blue-600 font-semibold text-sm uppercase tracking-wider">
+            About Us
+          </span>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">
+            Why Choose <span className="text-blue-600">Donation Hub</span>?
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed mb-12">
+            We are dedicated to connecting kind-hearted donors with meaningful
+            causes — supporting education, healthcare, and basic needs for those
+            who need it most across Pakistan.
+          </p>
+        </motion.div>
 
-      {/* Content */}
-      <div className="relative z-10 max-w-5xl mx-auto text-center">
-        <h2 className="text-4xl md:text-5xl font-bold text-amber-800 mb-6 drop-shadow-sm">
-          About <span className="text-orange-600">Donation Hub</span>
-        </h2>
-
-        <p className="text-lg md:text-xl text-gray-700 leading-relaxed max-w-3xl mx-auto mb-10">
-          We are a passionate non-profit organization dedicated to uplifting
-          communities through collective generosity. Our mission is to connect
-          kind-hearted donors with meaningful causes — supporting education,
-          healthcare, and basic needs for those who need it most.
-        </p>
-
-        {/* Icons Section */}
-        <div className="flex justify-center gap-10 mt-10 flex-wrap">
-          <div className="flex flex-col items-center text-amber-800">
-            <Heart size={40} />
-            <p className="mt-2 font-medium">Spread Love</p>
-          </div>
-          <div className="flex flex-col items-center text-orange-700">
-            <HandHeart size={40} />
-            <p className="mt-2 font-medium">Support Humanity</p>
-          </div>
-          <div className="flex flex-col items-center text-amber-900">
-            <Users size={40} />
-            <p className="mt-2 font-medium">Build Community</p>
-          </div>
+        {/* Feature Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {features.map((f, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+              className="bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-shadow duration-300 text-center group"
+            >
+              <div className={`inline-flex p-4 rounded-2xl ${f.bg} ${f.color} mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                {f.icon}
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">{f.title}</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

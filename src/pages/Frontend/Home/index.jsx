@@ -1,15 +1,14 @@
-// src/pages/public/Home.jsx
 import React from "react";
 import HeroSection from "./HeroSection";
 import AboutSection from "./AboutSection";
 import CampaignsSection from "./CampaignsSection";
 import TestimonialsSection from "./TestimonialSection";
-// import Contact from "./Contact";
+import Contact from "./Contact";
 
 const Home = () => {
   return (
     <div>
-      <section id="hero">
+      <section id="home">
         <HeroSection />
       </section>
 
@@ -25,9 +24,9 @@ const Home = () => {
         <TestimonialsSection />
       </section>
 
-      {/* <section id="contact">
+      <section id="contact">
         <Contact />
-      </section> */}
+      </section>
     </div>
   );
 };

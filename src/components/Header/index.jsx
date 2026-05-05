@@ -1,132 +1,157 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, HeartHandshake } from "lucide-react";
-import { motion } from "framer-motion";
-import { DashboardOutlined } from "@ant-design/icons";
-import { FaDonate } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAuthContext } from "../../contexts/Auth/AuthContext";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuth, user, handleLogout } = useAuthContext();
 
   const navItems = [
     { name: "Home", path: "home" },
     { name: "About", path: "about" },
     { name: "Campaigns", path: "campaigns" },
     { name: "Testimonials", path: "testimonials" },
+    { name: "Contact", path: "contact" },
   ];
 
   const handleNavClick = (sectionId) => {
     if (location.pathname !== "/") {
       navigate("/");
       setTimeout(() => {
-        document
-          .getElementById(sectionId)
-          ?.scrollIntoView({ behavior: "smooth" });
-      }, 120);
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+      }, 200);
     } else {
-      document
-        .getElementById(sectionId)
-        ?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
     }
+    setMenuOpen(false);
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-black/60 backdrop-blur-md border-b border-amber-500/30 text-white">
-      <div className="max-w-7xl mx-auto flex items-center justify-between py-4 px-6">
+    <header className="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
+      <div className="max-w-7xl mx-auto flex items-center justify-between py-3 px-6">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 text-2xl font-bold">
-          <HeartHandshake className="text-amber-400" />
-          <span className="text-amber-300">Donation Hub</span>
+        <Link to="/" className="flex items-center gap-2 text-xl font-bold text-gray-800">
+          <HeartHandshake className="text-blue-600 w-7 h-7" />
+          <span>Donation<span className="text-blue-600">Hub</span></span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex gap-8">
+        <nav className="hidden md:flex items-center gap-8">
           {navItems.map((item) => (
             <button
               key={item.name}
               onClick={() => handleNavClick(item.path)}
-              className="relative font-semibold pb-1 transition-all
-              hover:text-amber-400 after:absolute after:left-0 after:-bottom-1
-              after:h-[2px] after:w-0 after:bg-amber-400
-              after:transition-all hover:after:w-full"
+              className="text-gray-600 font-medium hover:text-blue-600 transition-colors duration-200 text-sm"
             >
               {item.name}
             </button>
           ))}
         </nav>
 
-        {/* Dashboard Button */}
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="hidden md:inline-block bg-gradient-to-r from-amber-400 to-yellow-500
-          text-black font-semibold px-6 py-2 rounded-full shadow-lg
-          hover:from-yellow-400 hover:to-amber-500 transition-all"
-        >
-          <DashboardOutlined className="mx-1!" />
-          Dashboard
-        </button>
+        {/* Desktop Auth Buttons */}
+        <div className="hidden md:flex items-center gap-3">
+          {isAuth ? (
+            <>
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="btn-primary !py-2 !px-5 !text-sm"
+              >
+                Dashboard
+              </button>
+              <button
+                onClick={() => { handleLogout(); navigate("/"); }}
+                className="text-gray-500 hover:text-red-500 text-sm font-medium transition-colors"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => navigate("/auth/login")}
+                className="text-gray-600 hover:text-blue-600 font-medium text-sm transition-colors"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => navigate("/auth/register")}
+                className="btn-primary !py-2 !px-5 !text-sm"
+              >
+                Get Started
+              </button>
+            </>
+          )}
+        </div>
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden text-amber-400"
+          className="md:hidden text-gray-600"
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          {menuOpen ? <X size={26} /> : <Menu size={26} />}
+          {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
       {/* Mobile Menu */}
-      {menuOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="md:hidden bg-black/90 backdrop-blur-md
-          border-t border-amber-400/20 px-6 py-4 space-y-4"
-        >
-          {navItems.map((item) => (
-            <button
-              key={item.name}
-              onClick={() => {
-                handleNavClick(item.path);
-                setMenuOpen(false);
-              }}
-              className="block w-full text-left text-gray-200
-              hover:text-amber-400 font-medium transition-all"
-            >
-              {item.name}
-            </button>
-          ))}
-
-          {/* Donate Shortcut */}
-          <button
-            onClick={() => {
-              handleNavClick("campaigns");
-              setMenuOpen(false);
-            }}
-            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-black font-semibold px-4 py-2 rounded-full shadow-lg text-sm md:text-base hover:scale-105 transition-transform duration-200"
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden bg-white border-t border-gray-100 px-6 py-4 space-y-3 overflow-hidden"
           >
-            <FaDonate className="text-lg" />
-            <span className="text-lg">Donate</span>
-          </button>
+            {navItems.map((item) => (
+              <button
+                key={item.name}
+                onClick={() => handleNavClick(item.path)}
+                className="block w-full text-left text-gray-600 hover:text-blue-600 font-medium py-1 transition-colors"
+              >
+                {item.name}
+              </button>
+            ))}
 
-          {/* Dashboard */}
-          <button
-            onClick={() => {
-              navigate("/dashboard");
-              setMenuOpen(false);
-            }}
-            className="block w-full text-center border border-amber-400
-            text-amber-400 font-semibold py-2 rounded-full
-            hover:bg-amber-400 hover:text-black transition-all"
-          >
-            <DashboardOutlined className="mx-1!" />
-            Dashboard
-          </button>
-        </motion.div>
-      )}
+            <div className="pt-3 border-t border-gray-100 space-y-2">
+              {isAuth ? (
+                <>
+                  <button
+                    onClick={() => { navigate("/dashboard"); setMenuOpen(false); }}
+                    className="w-full btn-primary !text-sm"
+                  >
+                    Dashboard
+                  </button>
+                  <button
+                    onClick={() => { handleLogout(); navigate("/"); setMenuOpen(false); }}
+                    className="w-full text-center text-red-500 font-medium py-2"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => { navigate("/auth/login"); setMenuOpen(false); }}
+                    className="w-full btn-secondary !text-sm"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={() => { navigate("/auth/register"); setMenuOpen(false); }}
+                    className="w-full btn-primary !text-sm"
+                  >
+                    Get Started
+                  </button>
+                </>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };

@@ -1,264 +1,290 @@
-// src/pages/campaigns/CampaignForm.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   Input,
   Button,
   DatePicker,
-  InputNumber,
   Select,
   message,
 } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined, PictureOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useAuthContext } from "../../../../../contexts/Auth/AuthContext";
 import { motion } from "framer-motion";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
+import Loader from "../../../../../components/Loader";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
 const categories = ["health", "education", "disaster", "others"];
-const statuses = ["active", "closed"];
 
 const CampaignForm = () => {
   const { token } = useAuthContext();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
+  
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get("editId");
+  const isEditing = !!editId;
+  const navigate = useNavigate();
+  const [fetching, setFetching] = useState(isEditing);
+
+  useEffect(() => {
+    if (isEditing) {
+      const fetchCampaign = async () => {
+        try {
+          const res = await axios.get(`${import.meta.env.VITE_API_URL}/campaigns/read/${editId}`);
+          const c = res.data;
+          
+          form.setFieldsValue({
+            title: c.title,
+            category: c.category,
+            goalAmount: c.goalAmount,
+            description: c.description,
+            dateRange: c.startDate && c.endDate ? [dayjs(c.startDate), dayjs(c.endDate)] : null,
+          });
+          
+          setExistingImages(c.images || []);
+        } catch (err) {
+          message.error("Failed to load campaign data");
+          navigate("/dashboard/manage-campaigns");
+        } finally {
+          setFetching(false);
+        }
+      };
+      fetchCampaign();
+    }
+  }, [editId, form, navigate]);
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     setImages((prev) => [...prev, ...files]);
   };
-  const removeImage = (index) => {
+
+  const removeNewImage = (index) => {
     setImages(images.filter((_, i) => i !== index));
   };
 
+  const removeExistingImage = (index) => {
+    // In a real app, you might want to delete from Cloudinary or just mark as removed
+    setExistingImages(existingImages.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (values) => {
-    const {
-      title,
-      description,
-      goalAmount,
-      raisedAmount,
-      category,
-      status,
-      dateRange,
-    } = values;
+    const { title, description, goalAmount, category, dateRange } = values;
 
     const formData = new FormData();
-
     formData.append("title", title);
     formData.append("description", description);
     formData.append("goalAmount", goalAmount);
-    formData.append("raisedAmount", raisedAmount || 0);
     formData.append("category", category);
-    formData.append("status", status);
-    formData.append("startDate", dateRange[0]?.toISOString());
-    formData.append("endDate", dateRange[1]?.toISOString());
+    
+    // For existing images in edit mode (we pass them back as JSON so backend knows which to keep)
+    // Note: The backend update route will need to be configured to handle 'existingImages'
+    if (isEditing) {
+      formData.append("existingImages", JSON.stringify(existingImages));
+    }
 
-    // ✅ append images
+    if (dateRange?.[0]) formData.append("startDate", dateRange[0].toISOString());
+    if (dateRange?.[1]) formData.append("endDate", dateRange[1].toISOString());
+
     images.forEach((img) => {
       formData.append("images", img);
     });
 
     setLoading(true);
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/campaigns/create`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+      if (isEditing) {
+        await axios.put(
+          `${import.meta.env.VITE_API_URL}/campaigns/update/${editId}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
           },
-        },
-      );
-
-      message.success("✅ Campaign created successfully");
-      form.resetFields();
-      setImages([]);
+        );
+        message.success("Campaign updated successfully!");
+        navigate("/dashboard/manage-campaigns");
+      } else {
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/campaigns/create`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        );
+        message.success("Campaign created successfully!");
+        form.resetFields();
+        setImages([]);
+      }
     } catch (error) {
       console.error(error);
-      message.error(error.response?.data?.message || "❌ Something went wrong");
+      message.error(error.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
 
+  if (fetching) return <Loader />;
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1.0 }}
-      className="max-w-4xl mx-auto p-8 bg-white rounded-3xl shadow-2xl text-black"
-    >
-      <h2 className="text-3xl font-bold mb-8 text-center drop-shadow-lg">
-        Launch Your Campaign
-      </h2>
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-in">
+      <div className="mb-8">
+        <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+          {isEditing ? "Edit Campaign" : "Launch New Campaign"}
+        </h2>
+        <p className="text-slate-500 mt-1">
+          {isEditing ? "Update your active fundraiser details." : "Create a beautiful fundraising page to share your cause."}
+        </p>
+      </div>
 
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        initialValues={{ raisedAmount: 0, status: "active" }}
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Title */}
-          <Form.Item
-            name="title"
-            label="Title"
-            rules={[{ required: true, message: "Please enter campaign title" }]}
-          >
-            <Input
-              placeholder="Campaign title"
-              className="w-full rounded-xl border-2 border-white/30 bg-white/10 text-white placeholder-white/70 px-4 py-3 focus:outline-none focus:border-white focus:ring-2 focus:ring-white/40 transition-all duration-300"
-            />
-          </Form.Item>
-
-          {/* Category */}
-          <Form.Item
-            name="category"
-            label="Category"
-            rules={[{ required: true, message: "Please select category" }]}
-          >
-            <Select
-              placeholder="Select category"
-              className="w-full rounded-xl border-2 border-white/30 bg-white/10 text-white px-4 py-3 focus:outline-none focus:border-white focus:ring-2 focus:ring-white/40 transition-all duration-300"
-              dropdownClassName="bg-white text-black rounded-xl"
-            >
-              {categories.map((cat) => (
-                <Option key={cat} value={cat}>
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          {/* Goal Amount */}
-          <Form.Item
-            name="goalAmount"
-            label="Goal Amount"
-            rules={[{ required: true, message: "Please enter goal amount" }]}
-          >
-            <Input
-              min={1}
-              placeholder="$0"
-              className="!w-full rounded-xl border-2 border-white/30 bg-white/10 text-white px-4 py-3 focus:outline-none focus:border-white focus:ring-2 focus:ring-white/40 transition-all duration-300"
-            />
-          </Form.Item>
-
-          {/* Raised Amount */}
-          <Form.Item name="raiseAmount" label="Raised Amount">
-            <Input
-              min={0}
-              placeholder="$0"
-              className="!w-full rounded-xl border-2 border-white/30 bg-white/10 text-white px-4 py-3 focus:outline-none focus:border-white focus:ring-2 focus:ring-white/40 transition-all duration-300"
-            />
-          </Form.Item>
-
-          {/* Status */}
-          <Form.Item
-            name="status"
-            label="Status"
-            rules={[{ required: true, message: "Please select a status" }]}
-          >
-            <Select
-              placeholder="Select status"
-              className="!w-full rounded-xl bg-white text-black placeholder-black/70 px-4 py-3 focus:outline-none focus:border-white focus:ring-2 focus:ring-white/40 transition-all duration-300"
-              dropdownClassName="bg-white text-black rounded-xl"
-            >
-              {statuses.map((s) => (
-                <Option key={s} value={s}>
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          {/* Date Range */}
-          <Form.Item
-            name="dateRange"
-            label="Start & End Date"
-            rules={[
-              { required: true, message: "Please select start and end date" },
-            ]}
-          >
-            <DatePicker.RangePicker className="!w-full rounded-xl border-2 border-white/30 bg-white/10 text-white px-4 py-3 focus:outline-none focus:border-white focus:ring-2 focus:ring-white/40 transition-all duration-300" />
-          </Form.Item>
-        </div>
-
-        {/* Description */}
-        <Form.Item
-          name="description"
-          label="Description"
-          rules={[{ required: true, message: "Please provide description" }]}
+      <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm shadow-slate-200/50">
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
         >
-          <TextArea
-            rows={4}
-            placeholder="Write a brief description about your campaign..."
-            className="!w-full rounded-2xl border-2 border-white/30 bg-white/10 text-white px-4 py-3 placeholder-white/70 focus:outline-none focus:border-white focus:ring-2 focus:ring-white/40 transition-all duration-300"
-          />
-        </Form.Item>
-        {/* Image Upload */}
-        <div className="mb-6">
-          <label className="block mb-2 font-semibold">Campaign Images</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Form.Item
+              name="title"
+              label={<span className="text-slate-700 font-bold uppercase tracking-wider text-xs">Campaign Title</span>}
+              rules={[{ required: true, message: "Please enter campaign title" }]}
+            >
+              <Input placeholder="e.g. Clean Water for Villages" className="!rounded-xl !py-3 !bg-slate-50 hover:!bg-white focus:!bg-white border-slate-200 font-medium text-lg" />
+            </Form.Item>
 
-          {/* Hidden Input */}
-          <input
-            type="file"
-            id="campaignImages"
-            multiple
-            accept="image/*"
-            onChange={handleImageChange}
-            className="hidden"
-          />
+            <Form.Item
+              name="category"
+              label={<span className="text-slate-700 font-bold uppercase tracking-wider text-xs">Category</span>}
+              rules={[{ required: true, message: "Please select category" }]}
+            >
+              <Select placeholder="Select cause category" className="!h-[50px] custom-select" dropdownStyle={{ borderRadius: '12px' }}>
+                {categories.map((cat) => (
+                  <Option key={cat} value={cat}>
+                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
 
-          {/* Upload Card */}
-          <label
-            htmlFor="campaignImages"
-            className="flex flex-col items-center justify-center w-[230px] h-40 border-2 border-solid border-gray-300 rounded-lg cursor-pointer hover:border-primary transition"
+            <Form.Item
+              name="goalAmount"
+              label={<span className="text-slate-700 font-bold uppercase tracking-wider text-xs">Funding Goal (₨)</span>}
+              rules={[{ required: true, message: "Please enter goal amount" }]}
+            >
+              <Input type="number" min={1} placeholder="e.g. 500000" className="!rounded-xl !py-3 !bg-slate-50 hover:!bg-white focus:!bg-white border-slate-200 font-medium text-lg" />
+            </Form.Item>
+
+            <Form.Item
+              name="dateRange"
+              label={<span className="text-slate-700 font-bold uppercase tracking-wider text-xs">Campaign Duration</span>}
+            >
+              <DatePicker.RangePicker className="!w-full !rounded-xl !py-3 !bg-slate-50 hover:!bg-white focus:!bg-white border-slate-200 font-medium text-slate-700" />
+            </Form.Item>
+          </div>
+
+          <Form.Item
+            name="description"
+            label={<span className="text-slate-700 font-bold uppercase tracking-wider text-xs">The Story</span>}
+            rules={[{ required: true, message: "Please tell donors about the cause" }]}
+            className="mt-6"
           >
-            <PlusOutlined className="text-3xl text-gray-400" />
-            <p className="mt-2 text-sm text-gray-500">Upload Images</p>
-          </label>
-        </div>
+            <TextArea
+              rows={6}
+              placeholder="Describe your campaign, its goals, and how the funds will make an impact..."
+              className="!rounded-2xl !p-4 !bg-slate-50 hover:!bg-white focus:!bg-white border-slate-200 font-medium text-slate-800 leading-relaxed"
+            />
+          </Form.Item>
 
-        {/* Preview */}
-        <div className="flex flex-wrap gap-4 mt-4">
-          {images.map((file, index) => (
-            <div key={index} className="relative">
-              <img
-                src={URL.createObjectURL(file)}
-                alt="preview"
-                className="w-28 h-28 object-cover rounded-xl border"
-              />
+          {/* Media Section */}
+          <div className="mt-8 mb-10">
+            <h3 className="text-slate-700 font-bold uppercase tracking-wider text-xs border-b border-slate-100 pb-2 mb-6">
+              Campaign Media
+            </h3>
+            
+            <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
+              {/* Existing Images (Edit Mode) */}
+              {existingImages.map((url, index) => (
+                <div key={`existing-${index}`} className="relative shrink-0 group">
+                  <div className="w-32 h-32 rounded-2xl overflow-hidden border-2 border-slate-200">
+                    <img src={url} alt="Campaign" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="absolute inset-0 bg-slate-900/40 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <button type="button" onClick={() => removeExistingImage(index)} className="bg-rose-500 text-white p-2 rounded-full transform hover:scale-110 shadow-lg">
+                      <DeleteOutlined />
+                    </button>
+                  </div>
+                  <span className="absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded backdrop-blur-sm">Current</span>
+                </div>
+              ))}
 
-              <button
-                type="button"
-                onClick={() => removeImage(index)}
-                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-2"
-              >
-                ✕
-              </button>
+              {/* New Images */}
+              {images.map((file, index) => (
+                <div key={`new-${index}`} className="relative shrink-0 group">
+                  <div className="w-32 h-32 rounded-2xl overflow-hidden border-2 border-emerald-500 shadow-md shadow-emerald-500/20">
+                    <img src={URL.createObjectURL(file)} alt="New upload" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="absolute inset-0 bg-slate-900/40 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <button type="button" onClick={() => removeNewImage(index)} className="bg-rose-500 text-white p-2 rounded-full transform hover:scale-110 shadow-lg">
+                      <DeleteOutlined />
+                    </button>
+                  </div>
+                  <span className="absolute top-2 left-2 bg-emerald-500 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded shadow-sm">New</span>
+                </div>
+              ))}
+
+              {/* Upload Button */}
+              <div className="shrink-0">
+                <input
+                  type="file"
+                  id="campaignImages"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="campaignImages"
+                  className="w-32 h-32 flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 transition-all group"
+                >
+                  <PictureOutlined className="text-3xl mb-2 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Add Photo</span>
+                </label>
+              </div>
             </div>
-          ))}
-        </div>
+          </div>
 
-        {/* Submit Button */}
-        <Form.Item>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <div className="flex gap-4">
             <Button
               type="primary"
               htmlType="submit"
               loading={loading}
-              className="w-full py-4 text-xl font-bold bg-white text-purple-600 hover:bg-white/90 hover:text-purple-700 rounded-2xl shadow-lg transition-all duration-300"
+              className="flex-1 !py-6 !rounded-2xl !text-lg !font-black tracking-wide !bg-emerald-600 hover:!bg-emerald-500 !border-none shadow-xl shadow-emerald-600/20"
             >
-              Launch Campaign
+              {isEditing ? "Save Campaign Changes" : "Publish Campaign"}
             </Button>
-          </motion.div>
-        </Form.Item>
-      </Form>
-    </motion.div>
+            {isEditing && (
+              <Button
+                type="default"
+                onClick={() => navigate("/dashboard/manage-campaigns")}
+                className="!py-6 px-8 !rounded-2xl !text-lg !font-bold tracking-wide !text-slate-500 !border-slate-200 hover:!text-slate-800 hover:!bg-slate-50"
+              >
+                Cancel
+              </Button>
+            )}
+          </div>
+        </Form>
+      </div>
+    </div>
   );
 };
 

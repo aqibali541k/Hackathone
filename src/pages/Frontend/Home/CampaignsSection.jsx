@@ -1,162 +1,184 @@
-// src/pages/public/CampaignsSection.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Card, Col, Row, Button, Input } from "antd";
+import { Button, Input } from "antd";
 import { useNavigate } from "react-router-dom";
-import { FaDonate } from "react-icons/fa";
+import { motion } from "framer-motion";
+import { Search, Heart, TrendingUp } from "lucide-react";
 
 const CampaignsSection = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [filteredCampaigns, setFilteredCampaigns] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeCategory, setActiveCategory] = useState("all");
   const navigate = useNavigate();
 
-  // Fetch campaigns
+  const categories = ["all", "health", "education", "disaster", "others"];
+
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/campaigns/readall`,
         );
-        setCampaigns(res.data);
-        setFilteredCampaigns(res.data);
+        const data = Array.isArray(res.data) ? res.data : [];
+        setCampaigns(data);
+        setFilteredCampaigns(data);
       } catch (err) {
         console.error(err);
+        setCampaigns([]);
+        setFilteredCampaigns([]);
       }
     };
     fetchCampaigns();
   }, []);
 
-  // Search filter
   useEffect(() => {
-    const filtered = campaigns.filter((c) =>
-      c.title.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
+    let filtered = campaigns;
+    if (activeCategory !== "all") {
+      filtered = filtered.filter((c) => c.category === activeCategory);
+    }
+    if (searchTerm) {
+      filtered = filtered.filter((c) =>
+        c.title.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+    }
     setFilteredCampaigns(filtered);
-  }, [searchTerm, campaigns]);
+  }, [searchTerm, activeCategory, campaigns]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-100 py-14 px-4 font-serif">
+    <div className="bg-gray-50 section-padding">
       <div className="max-w-7xl mx-auto">
-        {/* Title */}
-        <h2 className="text-3xl font-bold mb-8 text-center text-amber-800">
-          Active Campaigns
-        </h2>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-10"
+        >
+          <span className="text-blue-600 font-semibold text-sm uppercase tracking-wider">
+            Make a Difference
+          </span>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">
+            Active Campaigns
+          </h2>
+          <p className="text-gray-500 max-w-xl mx-auto">
+            Browse verified campaigns and support the causes you care about.
+          </p>
+        </motion.div>
 
-        {/* Search */}
-        <div className="flex justify-center mb-10">
-          <Input
-            placeholder="Search campaigns..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="!rounded-full !px-4 !py-2.5 !w-full sm:!w-2/3 md:!w-1/2 !border-amber-400"
-          />
+        {/* Search + Category Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mb-8">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              placeholder="Search campaigns..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white"
+            />
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                  activeCategory === cat
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-gray-600 border border-gray-200 hover:border-blue-300"
+                }`}
+              >
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Cards */}
-        <Row gutter={[20, 20]}>
+        {/* Campaign Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredCampaigns.length > 0 ? (
-            filteredCampaigns.map((c) => (
-              <Col key={c._id} xs={24} sm={12} md={8} lg={6} className="flex">
-                <Card
-                  hoverable
+            filteredCampaigns.map((c, i) => {
+              const raised = c.raisedAmount || 0;
+              const goal = c.goalAmount || 1;
+              const progress = Math.min((raised / goal) * 100, 100);
+              return (
+                <motion.div
+                  key={c._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05, duration: 0.4 }}
                   onClick={() => navigate(`/campaigns/${c._id}`)}
-                  className="
-                    cursor-pointer
-                    group flex flex-col h-full w-full
-                    rounded-2xl overflow-hidden
-                    bg-gradient-to-br from-amber-100 to-orange-50
-                    border border-amber-200
-                    shadow-sm
-                    transition-transform! duration-300! ease-in-out!
-                    hover:-translate-y-2! hover:shadow-xl!
-                  "
-                  cover={
-                    <div className="relative overflow-hidden">
-                      <img
-                        src={c?.images?.[0]}
-                        alt={c.title}
-                        className="
-                          h-44 w-full object-cover
-                          transition-transform duration-300
-                          group-hover:scale-105
-                        "
-                      />
-
-                      {/* Status */}
-                      <span
-                        className={`absolute top-2 right-2 px-2 py-0.5 text-[10px] font-semibold rounded-full
-                          ${
-                            c.status === "active"
-                              ? "bg-green-500 text-white"
-                              : "bg-red-500 text-white"
-                          }`}
-                      >
-                        {c.status === "active" ? "Active" : "Closed"}
-                      </span>
-                    </div>
-                  }
+                  className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group"
                 >
+                  {/* Image */}
+                  <div className="relative overflow-hidden h-44">
+                    <img
+                      src={c?.images?.[0] || "https://via.placeholder.com/400x200?text=Campaign"}
+                      alt={c.title}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <span
+                      className={`absolute top-3 right-3 px-2.5 py-0.5 text-xs font-semibold rounded-full ${
+                        c.status === "active"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {c.status === "active" ? "Active" : "Closed"}
+                    </span>
+                    <div className="absolute top-3 left-3 bg-white/90 rounded-full px-2.5 py-0.5 text-xs font-medium text-gray-600">
+                      {c.category?.charAt(0).toUpperCase() + c.category?.slice(1)}
+                    </div>
+                  </div>
+
                   {/* Content */}
-                  <div className="p-3 flex flex-col flex-1">
-                    <div className="flex-1 space-y-1.5">
-                      <h3 className="text-sm font-semibold text-amber-900 truncate">
-                        {c.title}
-                      </h3>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-900 mb-1 truncate">
+                      {c.title}
+                    </h3>
+                    <p className="text-gray-500 text-xs line-clamp-2 mb-3">
+                      {c.description}
+                    </p>
 
-                      <p className="text-gray-700 text-xs line-clamp-1">
-                        {c.description}
-                      </p>
-
-                      <div className="flex justify-between items-center pt-2 text-[11px]">
-                        <span className="font-medium text-amber-800">
-                          Goal:
-                          <span className="text-green-700 ml-1">
-                            ₨ {c.goalAmount.toLocaleString()}
-                          </span>
+                    {/* Progress Bar */}
+                    <div className="mb-3">
+                      <div className="w-full bg-gray-100 rounded-full h-2">
+                        <div
+                          className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between mt-1.5 text-xs text-gray-500">
+                        <span className="flex items-center gap-1">
+                          <TrendingUp className="w-3 h-3" />
+                          ₨ {(c.raisedAmount || 0).toLocaleString()}
                         </span>
-
-                        <span className="font-medium text-amber-800">
-                          Raised:
-                          <span className="text-blue-700 ml-1">
-                            ₨ {c.raisedAmount.toLocaleString()}
-                          </span>
-                        </span>
+                        <span>Goal: ₨ {(c.goalAmount || 0).toLocaleString()}</span>
                       </div>
                     </div>
 
-                    {/* Button (stop bubbling so card click bhi kaam kare) */}
-                    <Button
+                    {/* Donate Button */}
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate(`/campaigns/${c._id}`);
                       }}
-                      className="
-                        mt-3 w-full
-                        bg-red-600! text-white!
-                        hover:bg-white! hover:text-red-600!
-                        border-red-600!
-                        !text-xs !py-2.5
-                        shadow-sm hover:shadow-md
-                        transition-all duration-300
-                        hover:scale-[1.02]
-                      "
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-xl transition-all duration-200 flex items-center justify-center gap-1.5"
                     >
-                      <span className="flex items-center justify-center gap-1.5">
-                        <FaDonate className="text-xs" />
-                        Donate
-                      </span>
-                    </Button>
+                      <Heart className="w-3.5 h-3.5" />
+                      Donate Now
+                    </button>
                   </div>
-                </Card>
-              </Col>
-            ))
+                </motion.div>
+              );
+            })
           ) : (
-            <p className="text-center text-amber-800 w-full">
-              No campaigns found.
-            </p>
+            <div className="col-span-full text-center py-12">
+              <p className="text-gray-400 text-lg">No campaigns found.</p>
+            </div>
           )}
-        </Row>
+        </div>
       </div>
     </div>
   );

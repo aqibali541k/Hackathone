@@ -6,6 +6,7 @@ import CampaignForm from "./Campaigns/CampaignForm";
 import ManageCampaigns from "./Campaigns/ManageCampaigns";
 import Donations from "./Campaigns/Donations";
 import Analytics from "./Analytics";
+import Inbox from "./Inbox";
 
 const Index = () => {
   return (
@@ -18,6 +19,7 @@ const Index = () => {
           <Route path="profile" element={<Profile />} />
           <Route path="campaigns-form" element={<CampaignForm />} />
           <Route path="manage-campaigns" element={<ManageCampaigns />} />
+          <Route path="inbox" element={<Inbox />} />
           <Route path="donations" element={<Donations />} />
         </Routes>
       </div>

@@ -1,4 +1,3 @@
-// src/pages/public/TestimonialsSection.jsx
 import React from "react";
 import { motion } from "framer-motion";
 import { Quote } from "lucide-react";
@@ -6,86 +5,73 @@ import { Quote } from "lucide-react";
 const testimonials = [
   {
     name: "Ali Raza",
+    role: "Regular Donor",
     feedback:
-      "Donating here was easy and deeply fulfilling. You can truly see the impact.",
+      "Donating here was easy and deeply fulfilling. The transparency is unmatched — I can see exactly where my money goes.",
   },
   {
     name: "Sara Khan",
+    role: "Monthly Contributor",
     feedback:
-      "I admire their transparency and dedication to every cause they support.",
+      "I admire their dedication to every cause. Knowing that verified NGOs handle my donations gives me confidence.",
   },
   {
     name: "Ahmed Ali",
+    role: "Corporate Donor",
     feedback:
-      "A trustworthy and heartfelt organization — proud to contribute regularly.",
+      "A trustworthy and heartfelt organization. Our company has been proudly contributing regularly through this platform.",
   },
 ];
 
 const TestimonialsSection = () => {
   return (
-    <section className="relative py-24 px-6 bg-gradient-to-br from-[#fff7ed] via-[#ffedd5] to-[#fff] overflow-hidden">
-      {/* Decorative Blobs */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-orange-300/30 rounded-full blur-3xl"></div>
-      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-amber-300/30 rounded-full blur-3xl"></div>
-
+    <section className="bg-white section-padding">
       {/* Heading */}
       <motion.div
-        initial={{ opacity: 0, y: -30 }}
+        initial={{ opacity: 0, y: -20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="text-center mb-20 relative z-10"
+        className="text-center mb-14"
       >
-        <p className="text-sm uppercase tracking-widest text-amber-600 font-semibold">
+        <span className="text-blue-600 font-semibold text-sm uppercase tracking-wider">
           Testimonials
-        </p>
-        <h2 className="text-4xl md:text-5xl font-extrabold text-amber-900 mt-2">
-          Words From Our Supporters
+        </span>
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-3">
+          What Our Donors Say
         </h2>
-        <p className="text-gray-600 mt-4 max-w-xl mx-auto text-sm md:text-base">
-          Real stories from people who chose to spread kindness and hope.
+        <p className="text-gray-500 max-w-xl mx-auto text-sm md:text-base">
+          Real stories from people who chose to make a difference.
         </p>
       </motion.div>
 
       {/* Cards */}
-      <div className="relative z-10 max-w-7xl mx-auto grid gap-10 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="max-w-6xl mx-auto grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {testimonials.map((t, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: i * 0.15, duration: 0.6 }}
-            whileHover={{
-              y: -12,
-              rotate: 0.5,
-              boxShadow: "0 25px 60px rgba(0,0,0,0.15)",
-            }}
-            className="
-              relative bg-white/90 backdrop-blur-xl
-              border border-amber-200
-              rounded-3xl p-8
-              transition-all duration-500
-            "
+            transition={{ delay: i * 0.1, duration: 0.5 }}
+            className="bg-gray-50 border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-all duration-300 relative"
           >
-            {/* Floating Quote */}
-            <div className="absolute -top-6 left-6 bg-gradient-to-br from-amber-400 to-orange-500 p-4 rounded-2xl shadow-lg">
-              <Quote className="w-6 h-6 text-white" />
+            {/* Quote Icon */}
+            <div className="absolute -top-4 left-6 bg-blue-600 p-2.5 rounded-xl shadow-sm">
+              <Quote className="w-4 h-4 text-white" />
             </div>
 
             {/* Feedback */}
-            <p className="text-gray-700 text-sm md:text-base leading-relaxed italic mt-8 mb-8">
-              “{t.feedback}”
+            <p className="text-gray-600 text-sm leading-relaxed mt-4 mb-6">
+              "{t.feedback}"
             </p>
 
             {/* Divider */}
-            <div className="h-px w-12 bg-amber-400 mb-4"></div>
+            <div className="h-px w-10 bg-blue-200 mb-3" />
 
             {/* Name */}
-            <p className="font-semibold text-amber-800 text-sm md:text-base">
-              {t.name}
-            </p>
-            <p className="text-xs text-gray-500">Supporter</p>
+            <p className="font-semibold text-gray-900 text-sm">{t.name}</p>
+            <p className="text-xs text-gray-400">{t.role}</p>
           </motion.div>
         ))}
       </div>
