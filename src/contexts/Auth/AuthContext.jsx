@@ -60,7 +60,7 @@ const AuthProvider = ({ children }) => {
     setState(initialState);
   };
 
-  if (isAppLoading) return <Loader />;
+  if (isAppLoading && !state.isAuth) return <Loader />;
 
   return (
     <AuthContext.Provider

@@ -105,7 +105,6 @@ const CampaignForm = () => {
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
             },
           },
         );
@@ -118,7 +117,6 @@ const CampaignForm = () => {
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
             },
           },
         );

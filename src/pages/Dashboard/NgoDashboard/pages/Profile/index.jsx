@@ -54,7 +54,6 @@ const Profile = () => {
       toast.success("Profile updated successfully!");
       setEditMode(false);
       setAvatarFile(null);
-      setTimeout(() => window.location.reload(), 800);
     } catch (err) {
       console.error(err);
       toast.error("Failed to update profile");
